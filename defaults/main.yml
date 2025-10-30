@@ -1,0 +1,4 @@
+#SPDX-License-Identifier: MIT-0
+---
+grub_resolution: "1920x1080"
+themes_directory: "/usr/share/plymouth/themes"

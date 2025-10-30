@@ -1,0 +1,5 @@
+#SPDX-License-Identifier: MIT-0
+---
+- name: reboot_grub_needed
+  ansible.builtin.debug:
+    msg: "GRUB has been updated. A reboot is required for resolution to take effect."
