@@ -8,14 +8,12 @@
       - unzip
     state: present
     update_cache: true
-  become: true
 
 - name: Ensure GRUB_GFXMODE is set
   ansible.builtin.lineinfile:
     path: /etc/default/grub
     regexp: '^GRUB_GFXMODE='
-    line: "GRUB_GFXMODE={{ grub_resolution }}"
-  become: true
+    line: "GRUB_GFXMODE={{ plymouth_grub_resolution }}"
 
 - name: Ensure GRUB_CMDLINE_LINUX_DEFAULT is set to "quiet splash"
   ansible.builtin.lineinfile:
@@ -23,34 +21,29 @@
     regexp: '^GRUB_CMDLINE_LINUX_DEFAULT='
     line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"'
     backrefs: true
-  become: true
 
 - name: Create destination directory
   ansible.builtin.file:
-    path: "{{ themes_directory }}"
+    path: "{{ plymouth_themes_directory }}"
     state: directory
     mode: '0755'
-  become: true
 
 - name: Copy ZIP file to target machine
   ansible.builtin.copy:
-    src: "{{ theme_src }}"
-    dest: "/tmp/{{ theme_name }}.zip"
+    src: "{{ plymouth_theme_src }}"
+    dest: "/tmp/{{ plymouth_theme_name }}.zip"
     mode: '0644'
 
 - name: Unzip theme into Plymouth directory
   ansible.builtin.unarchive:
-    src: "/tmp/{{ theme_name }}.zip"
-    dest: "{{ themes_directory }}"
+    src: "/tmp/{{ plymouth_theme_name }}.zip"
+    dest: "{{ plymouth_themes_directory }}"
     remote_src: true
-  become: true
 
 - name: Set the custom theme as default
   ansible.builtin.command:
-    cmd: plymouth-set-default-theme -R {{ theme_name }}
-  become: true
+    cmd: plymouth-set-default-theme -R {{ plymouth_theme_name }}
 
 - name: Update GRUB config
   ansible.builtin.command: update-grub
   notify: reboot_grub_needed
-  become: true
